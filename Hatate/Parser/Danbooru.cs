@@ -21,7 +21,7 @@ namespace Hatate.Parser
 
 			using (WebClient webClient = new WebClient()) {
 				webClient.Headers.Add("User-Agent", this.UserAgent);
-
+				webClient.Encoding = Encoding.UTF8;
 				string json = null;
 
 				for (int i = 0; i < 3; i++)
@@ -79,8 +79,19 @@ namespace Hatate.Parser
             if (string.IsNullOrWhiteSpace(json)) {
                 return false;
             }
+			JObject parsed;
+            try { 
+				parsed = JObject.Parse(json); 
+			}
+			catch(Newtonsoft.Json.JsonReaderException exception){
+				var shift_jis = Encoding.GetEncoding(932);
+				var utf8 = Encoding.UTF8;
+				byte[] shiftJisBytes = shift_jis.GetBytes(json);
+				byte[] utf8Bytes = Encoding.Convert(shift_jis, utf8, shiftJisBytes);
+				string json_utf8 = utf8.GetString(utf8Bytes);
+				parsed = JObject.Parse(json_utf8);
 
-            JObject parsed = JObject.Parse(json);
+            }
 
             JToken rating = parsed.GetValue("rating");
             JToken width = parsed.GetValue("image_width");

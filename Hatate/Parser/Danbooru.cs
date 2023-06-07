@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using Newtonsoft.Json.Linq;
-
+using Newtonsoft.Json.Schema;
+using System.Text;
 namespace Hatate.Parser
 {
 	class Danbooru : Page, IParser
@@ -23,20 +24,34 @@ namespace Hatate.Parser
 
 				string json = null;
 
-				try {
-					json = webClient.DownloadString("https://danbooru.donmai.us/posts/" + postId + ".json");
-				} catch (WebException webException) {
-					HttpWebResponse response = (HttpWebResponse)webException.Response;
-
-					if  (response.StatusCode == HttpStatusCode.NotFound) {
-						this.unavailable = true;
+				for (int i = 0; i < 3; i++)
+				{
+					try
+					{
+						json = webClient.DownloadString("https://danbooru.donmai.us/posts/" + postId + ".json");
+						break;
 					}
-
-					return false;
-				} catch {
-					return false;
+					catch (WebException webException)
+					{
+						HttpWebResponse response = (HttpWebResponse)webException.Response;
+						if (response == null)
+						{
+							this.unreachable = true;
+                            if (i==2) { return false; }
+                            else { continue; }
+						}
+						if (response.StatusCode == HttpStatusCode.NotFound)
+						{
+							this.unavailable = true;
+							return false;
+						}
+						return false;
+					}
+					catch
+					{
+						return false;
+					}
 				}
-
 				return this.ParseJson(json);
 			}
 		}

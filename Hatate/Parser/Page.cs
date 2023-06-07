@@ -22,6 +22,7 @@ namespace Hatate.Parser
 		protected int height = 0;
 		protected string rating = null;
 		protected bool unavailable = false;
+		protected bool unreachable = false;
 		protected ushort pages = 0;
 
 		/*

@@ -500,7 +500,6 @@ namespace Hatate
 			get { return this.unavailable; }
 			set { this.unavailable = value; }
 		}
-
 		/// <summary>
 		/// Number of pages in an album.
 		/// </summary>

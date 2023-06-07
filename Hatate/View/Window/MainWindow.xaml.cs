@@ -713,7 +713,7 @@ namespace Hatate
 			}
 
 			foreach (Tag tag in result.Tags) {
-				// Don't add the "hatate:tagged" tag is we only have user-added or hatate-added tags
+				// Don't add the "hatate:tagged" tag if we only have user-added or hatate-added tags
 				if (tag.Source == Enum.TagSource.User || tag.Source == Enum.TagSource.Hatate) {
 					continue;
 				}
@@ -758,7 +758,6 @@ namespace Hatate
 
 			// For some booru we might know if the image is available on the page even if the parsing fails
 			result.Unavailable = booru.Unavailable;
-
 			// Don't go further if we can't retrieve tags from the URL
 			if (!success) {
 				this.ListBox_Tags.Items.Refresh();

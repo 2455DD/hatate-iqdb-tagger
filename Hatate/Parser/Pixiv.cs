@@ -36,19 +36,23 @@ namespace Hatate.Parser
 			using (WebClient webClient = new WebClient()) {
 				// By setting the language to English the Pixiv API will return tags with english translations
 				webClient.Headers.Add("Accept-Language", "en-us;q=0.5,en;q=0.3");
-
+				webClient.Encoding = System.Text.Encoding.UTF8;
 				string json = null;
 
 				try {
 					json = webClient.DownloadString(jsonUrl);
 				} catch (WebException webException) {
 					HttpWebResponse response = (HttpWebResponse)webException.Response;
-
-					// Work has been deleted
-					if  (response.StatusCode == HttpStatusCode.NotFound) {
-						this.unavailable = true;
+					if (response == null)
+					{
+						this.unreachable = true;
+						return false;
 					}
-
+					if (response.StatusCode == HttpStatusCode.NotFound)
+					{
+						this.unavailable = true;
+						return false;
+					}
 					return false;
 				} catch {
 					return false;
